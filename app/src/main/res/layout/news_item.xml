@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    android:background="@drawable/news_item_bg"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/newsTextContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toStartOf="@+id/arrowIcon"
+        android:layout_alignParentStart="true">
+
+        <!-- News site name -->
+        <TextView
+            android:id="@+id/newsSource"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="The Business Standard"
+            android:textColor="#757575"
+            android:textSize="12sp"
+            android:paddingBottom="4dp" />
+
+        <!-- News title -->
+        <TextView
+            android:id="@+id/newsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="2dp"
+            android:paddingBottom="6dp" />
+
+        <!-- Time ago -->
+        <TextView
+            android:id="@+id/newsTimeAgo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="3 hours ago"
+            android:textColor="#757575"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!-- Arrow icon -->
+    <ImageView
+        android:id="@+id/arrowIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/right_arrow"
+        android:tint="#9CA3AF" />
+
+</RelativeLayout>

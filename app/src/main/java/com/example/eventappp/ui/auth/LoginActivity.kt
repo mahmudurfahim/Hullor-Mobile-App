@@ -1,0 +1,111 @@
+package com.example.eventappp.ui.auth
+
+import android.content.Intent
+import android.graphics.Color
+import android.os.Bundle
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.example.eventappp.MainActivity
+import com.example.eventappp.R
+import com.example.eventappp.databinding.ActivityLoginBinding
+import com.example.eventappp.ui.home_button.ProfileActivity
+import com.example.eventappp.ui.home_button.SavedListActivity
+import com.google.firebase.auth.FirebaseAuth
+
+class LoginActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var auth: FirebaseAuth
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            // Dark icons? (if background is light)
+            isAppearanceLightStatusBars = true
+        }
+
+        window.statusBarColor = Color.TRANSPARENT
+
+
+
+
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        auth = FirebaseAuth.getInstance()
+
+        // Adjust top padding for status bar
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rootLinearLayout) { view, insets ->
+            view.setPadding(
+                view.paddingLeft,
+                insets.systemWindowInsetTop + view.paddingTop,
+                view.paddingRight,
+                view.paddingBottom
+            )
+            insets
+        }
+
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
+            onBackPressed()
+        }
+
+        binding.btnLogin.setOnClickListener {
+            val phone = binding.etPhone.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+
+            if (phone.isEmpty() || phone.length != 11 || password.isEmpty()) {
+                Toast.makeText(this, "Enter valid phone and password", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Disable button to prevent multiple clicks
+            binding.btnLogin.isEnabled = false
+
+            val email = "$phone@gmail.com"
+
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+
+                    // Get the screen user wanted before login
+                    val destination = intent.getStringExtra("destination")
+
+                    val nextIntent = when (destination) {
+                        "saved" -> Intent(this, SavedListActivity::class.java)
+                        "profile" -> Intent(this, ProfileActivity::class.java)
+                        else -> Intent(this, MainActivity::class.java)
+                    }
+
+                    nextIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(nextIntent)
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                }
+                .addOnFailureListener {
+                    binding.btnLogin.isEnabled = true
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                }
+
+        }
+
+        binding.tvGoToRegister.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+}

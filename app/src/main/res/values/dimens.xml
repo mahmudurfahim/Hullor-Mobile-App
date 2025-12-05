@@ -1,0 +1,21 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="page_margin">16dp</dimen>
+    <dimen name="page_offset">32dp</dimen>
+
+    <dimen name="pageMargin">12dp</dimen>
+    <dimen name="offsetPx">40dp</dimen>
+
+    <dimen name="banner_next_item_visible">50dp</dimen>
+
+    <dimen name="banner_item_spacing">30dp</dimen>
+
+    <!-- Controls horizontal margin for each banner item -->
+    <dimen name="banner_current_item_horizontal_margin">40dp</dimen>
+
+
+
+</resources>

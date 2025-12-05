@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Hullor</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Events</string>
+    <string name="title_notifications">More</string>
+    <string name="title_news">News</string>
+</resources>

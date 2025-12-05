@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.eventappp">
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
+
+
+
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/app_icon"
+        android:roundIcon="@drawable/app_icon_circle"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EventApp.NoActionBar"
+        tools:targetApi="31">
+
+        <!-- 🔹 Launcher Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:hardwareAccelerated="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 🔹 Login Activity -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+        <activity android:name=".ui.auth.RegisterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar"/>
+        <activity android:name=".ui.auth.VerifyOtpActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar"/>
+        <activity
+            android:name=".ui.home_button.ProfileActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+
+        <activity
+            android:name=".ui.home_button.SavedListActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+        <activity
+            android:name=".ui.home_button.SavedDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+        <activity
+            android:name=".ui.home_button.TrendingActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+        <activity
+            android:name=".ui.ticket.TicketWebActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+        <activity
+            android:name=".ui.ticket.TicketHomeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+        <activity
+            android:name=".ui.home_button.CollaborationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".ui.news.NewsWebActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+ <activity
+            android:name=".ui.notifications.MoreWebActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+
+
+    </application>
+
+</manifest>

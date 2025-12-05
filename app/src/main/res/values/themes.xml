@@ -1,0 +1,33 @@
+<!-- res/values/themes.xml -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="Theme.EventApp.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/purple_700</item>
+
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/black</item>
+
+
+        <!-- Background -->
+        <item name="android:windowBackground">@color/white</item>
+
+        <!-- No default ActionBar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- Enable Material components ripple effects -->
+        <item name="android:buttonStyle">@style/Widget.MaterialComponents.Button</item>
+        <item name="android:colorAccent">@color/purple_700</item>
+
+        <!-- Optional: default font -->
+
+    </style>
+
+</resources>
