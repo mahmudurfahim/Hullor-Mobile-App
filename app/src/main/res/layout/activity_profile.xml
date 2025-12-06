@@ -90,16 +90,33 @@
 
 
             <!-- Logout Button -->
-            <Button
+            <TextView
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Logout"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:backgroundTint="@color/purple_700"
                 android:background="@drawable/rounded_corners"
                 android:padding="14dp"
                 android:elevation="4dp"/>
+
+            <!-- Delete Profile Button -->
+            <TextView
+                android:id="@+id/btnDeleteProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Profile"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:backgroundTint="#B30000"
+                android:background="@drawable/rounded_corners"
+                android:padding="14dp"
+                android:elevation="4dp"
+                android:layout_marginTop="12dp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

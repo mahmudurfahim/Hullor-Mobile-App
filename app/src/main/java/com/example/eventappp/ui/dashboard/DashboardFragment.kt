@@ -68,6 +68,9 @@ class DashboardFragment : Fragment() {
 
 
     private fun loadEvents() {
+
+        binding.eventProgress.visibility = View.VISIBLE // Show progress
+
         db.collection("events")
             .get()
             .addOnSuccessListener { result ->
@@ -121,8 +124,10 @@ class DashboardFragment : Fragment() {
                     val positionToShow = if (lastViewedPosition < eventList.size) lastViewedPosition else 0
                     binding.viewPagerEvents.setCurrentItem(positionToShow, false)
                 }
+                binding.eventProgress.visibility = View.GONE // Hide progress
             }
             .addOnFailureListener { e ->
+                binding.eventProgress.visibility = View.GONE // Hide progress on failure
                 e.printStackTrace()
             }
     }

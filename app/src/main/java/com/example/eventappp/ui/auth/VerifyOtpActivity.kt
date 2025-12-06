@@ -7,15 +7,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.eventappp.MainActivity
 import com.example.eventappp.R
 import com.example.eventappp.databinding.ActivityVerifyOtpBinding
-import com.example.eventappp.ui.ticket.TicketHomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import java.io.IOException
 import java.net.URLEncoder
+import kotlin.random.Random
 
 class VerifyOtpActivity : AppCompatActivity() {
 
@@ -30,51 +29,31 @@ class VerifyOtpActivity : AppCompatActivity() {
     private var name = ""
     private var emailInput = ""
     private var password = ""
+    private var mode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVerifyOtpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        mode = intent.getStringExtra("mode")!!
 
-        name = intent.getStringExtra("name")!!
-        phone = intent.getStringExtra("phone")!!
-        emailInput = intent.getStringExtra("emailInput")!!
-        password = intent.getStringExtra("password")!!
+        name = intent.getStringExtra("name") ?: ""
+        phone = intent.getStringExtra("phone") ?: ""
+        emailInput = intent.getStringExtra("emailInput") ?: ""
+        password = intent.getStringExtra("password") ?: ""
         correctOtp = intent.getStringExtra("otp")!!
 
         startTimer()
 
-        binding.btnVerify.setOnClickListener {
-            val entered = binding.etOtp.text.toString().trim()
-            if (entered == correctOtp) {
-                registerUser()
-            } else {
-                Toast.makeText(this, "Wrong OTP", Toast.LENGTH_SHORT).show()
-            }
-        }
+        binding.btnVerify.setOnClickListener { verifyOtp() }
+        binding.btnResend.setOnClickListener { resendOtp() }
 
-        binding.btnResend.setOnClickListener {
-            val newOtp = (100000..999999).random().toString()
-            correctOtp = newOtp
-            sendOtp(newOtp)
-            startTimer()
-        }
-
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            startActivity(intent)
-            finish()
-        }
-
-
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
     }
 
     private fun startTimer() {
         binding.btnResend.visibility = View.INVISIBLE
-
         timer = object : CountDownTimer(60000, 1000) {
             override fun onTick(ms: Long) {
                 binding.tvTimer.text = "Resend in ${ms / 1000}s"
@@ -84,32 +63,43 @@ class VerifyOtpActivity : AppCompatActivity() {
                 binding.tvTimer.text = "You can resend now"
                 binding.btnResend.visibility = View.VISIBLE
             }
-        }
-        timer.start()
+        }.start()
     }
 
+    private fun resendOtp() {
+        correctOtp = (100000..999999).random().toString()
+        sendOtp(correctOtp)
+        startTimer()
+    }
 
     private fun sendOtp(otp: String) {
         val number = "88$phone"
         val message = URLEncoder.encode("Your Hullor OTP is: $otp", "UTF-8")
-        val url =
-            "https://bulksmsbd.net/api/smsapi?api_key=$smsApiKey&senderid=$senderId&type=text&number=$number&message=$message"
-
+        val url = "https://bulksmsbd.net/api/smsapi?api_key=$smsApiKey&senderid=$senderId&type=text&number=$number&message=$message"
         client.newCall(Request.Builder().url(url).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
-
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread { Toast.makeText(this@VerifyOtpActivity, "OTP resent", Toast.LENGTH_SHORT).show() }
             }
         })
     }
 
+    private fun verifyOtp() {
+        val enteredOtp = binding.etOtp.text.toString().trim()
+        if (enteredOtp != correctOtp) {
+            Toast.makeText(this, "Wrong OTP", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        when (mode) {
+            "register" -> registerUser()
+        }
+    }
+
     private fun registerUser() {
         val auth = FirebaseAuth.getInstance()
         val db = FirebaseFirestore.getInstance()
-        val firebaseEmail = "${phone}@gmail.com"
-
-        // Disable verify button to prevent multiple clicks
+        val firebaseEmail = "$phone@gmail.com"
         binding.btnVerify.isEnabled = false
 
         auth.createUserWithEmailAndPassword(firebaseEmail, password)
@@ -122,7 +112,6 @@ class VerifyOtpActivity : AppCompatActivity() {
                     "email" to emailInput,
                     "role" to "user"
                 )
-
                 db.collection("users").document(uid).set(data)
                     .addOnSuccessListener {
                         Toast.makeText(this, "Registration complete!", Toast.LENGTH_SHORT).show()
@@ -138,17 +127,7 @@ class VerifyOtpActivity : AppCompatActivity() {
                 Toast.makeText(this, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 binding.btnVerify.isEnabled = true
             }
-
-
     }
 
-    override fun onBackPressed() {
-        startActivity(
-            Intent(this, RegisterActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        )
-    }
 
 }
-
-

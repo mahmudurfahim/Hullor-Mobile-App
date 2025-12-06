@@ -23,19 +23,9 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        WindowInsetsControllerCompat(window, window.decorView).apply {
-            // Dark icons? (if background is light)
-            isAppearanceLightStatusBars = true
-        }
-
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         window.statusBarColor = Color.TRANSPARENT
-
-
-
-
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -53,59 +43,50 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
-            onBackPressed()
-        }
-
-        binding.btnLogin.setOnClickListener {
-            val phone = binding.etPhone.text.toString().trim()
-            val password = binding.etPassword.text.toString().trim()
-
-            if (phone.isEmpty() || phone.length != 11 || password.isEmpty()) {
-                Toast.makeText(this, "Enter valid phone and password", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Disable button to prevent multiple clicks
-            binding.btnLogin.isEnabled = false
-
-            val email = "$phone@gmail.com"
-
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
-
-                    // Get the screen user wanted before login
-                    val destination = intent.getStringExtra("destination")
-
-                    val nextIntent = when (destination) {
-                        "saved" -> Intent(this, SavedListActivity::class.java)
-                        "profile" -> Intent(this, ProfileActivity::class.java)
-                        else -> Intent(this, MainActivity::class.java)
-                    }
-
-                    nextIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(nextIntent)
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                }
-                .addOnFailureListener {
-                    binding.btnLogin.isEnabled = true
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                }
-
-        }
+        binding.btnLogin.setOnClickListener { loginUser() }
 
         binding.tvGoToRegister.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            startActivity(Intent(this, RegisterActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         }
+
+
+
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener { onBackPressed() }
+    }
+
+    private fun loginUser() {
+        val phone = binding.etPhone.text.toString().trim()
+        val password = binding.etPassword.text.toString().trim()
+
+        if (phone.isEmpty() || phone.length != 11 || password.isEmpty()) {
+            Toast.makeText(this, "Enter valid phone and password", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        binding.btnLogin.isEnabled = false
+        val email = "$phone@gmail.com"
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+                val destination = intent.getStringExtra("destination")
+                val nextIntent = when (destination) {
+                    "saved" -> Intent(this, SavedListActivity::class.java)
+                    "profile" -> Intent(this, ProfileActivity::class.java)
+                    else -> Intent(this, MainActivity::class.java)
+                }
+                nextIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(nextIntent)
+            }
+            .addOnFailureListener {
+                binding.btnLogin.isEnabled = true
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+            }
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        startActivity(Intent(this, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
     }
 }

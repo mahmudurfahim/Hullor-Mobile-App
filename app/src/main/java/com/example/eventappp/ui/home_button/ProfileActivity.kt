@@ -26,6 +26,9 @@ class ProfileActivity : AppCompatActivity() {
    // private lateinit var textGender: TextView
     private lateinit var btnLogout: Button
 
+    private lateinit var btnDeleteProfile: Button
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -49,6 +52,9 @@ class ProfileActivity : AppCompatActivity() {
         textEmail = findViewById(R.id.textEmail)
        // textGender = findViewById(R.id.textGender)
         btnLogout = findViewById(R.id.btnLogout)
+
+        btnDeleteProfile = findViewById(R.id.btnDeleteProfile)
+
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener {
@@ -85,6 +91,48 @@ class ProfileActivity : AppCompatActivity() {
 
             finish()
         }
+
+        btnDeleteProfile.setOnClickListener {
+            val user = auth.currentUser
+            if (user != null) {
+                // Show confirmation dialog
+                val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+                builder.setTitle("Delete Profile")
+                builder.setMessage("Are you sure you want to delete your profile? This action cannot be undone.")
+                builder.setPositiveButton("Yes") { dialog, _ ->
+                    // Delete user document from Firestore
+                    db.collection("users").document(user.uid).delete()
+                        .addOnSuccessListener {
+                            // Delete user from Firebase Auth
+                            user.delete().addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(this, "Profile deleted successfully", Toast.LENGTH_SHORT).show()
+                                    // Redirect to MainActivity
+                                    val intent = Intent(this, MainActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(this, "Failed to delete user: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Failed to delete profile data: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+
+                    dialog.dismiss()
+                }
+                builder.setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                builder.create().show()
+            } else {
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
     }
 
     // Back button goes to MainActivity

@@ -64,7 +64,7 @@ class HomeFragment : Fragment() {
         binding.bannerViewPager.apply {
             adapter = bannerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 3
+            offscreenPageLimit = 5
             clipToPadding = false
             clipChildren = false
             (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -329,7 +329,7 @@ class HomeFragment : Fragment() {
                 if (!isAdded || _binding == null) return
                 val next = binding.autoSliderHome.currentItem + 1
                 binding.autoSliderHome.setCurrentItem(next, true)
-                sliderHandler.postDelayed(this, 6000)
+                sliderHandler.postDelayed(this, 4000)
             }
         }
 
@@ -338,11 +338,11 @@ class HomeFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 sliderHandler.removeCallbacks(sliderRunnable)
-                sliderHandler.postDelayed(sliderRunnable, 6000)
+                sliderHandler.postDelayed(sliderRunnable, 4000)
             }
         })
 
-        sliderHandler.postDelayed(sliderRunnable, 6000)
+        sliderHandler.postDelayed(sliderRunnable, 4000)
     }
 
 

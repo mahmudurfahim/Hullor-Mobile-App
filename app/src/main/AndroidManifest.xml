@@ -38,12 +38,18 @@
             android:exported="true"
             android:theme="@style/Theme.EventApp.NoActionBar" />
 
+
+
         <activity android:name=".ui.auth.RegisterActivity"
             android:exported="true"
             android:theme="@style/Theme.EventApp.NoActionBar"/>
+
+
+
         <activity android:name=".ui.auth.VerifyOtpActivity"
             android:exported="true"
             android:theme="@style/Theme.EventApp.NoActionBar"/>
+
         <activity
             android:name=".ui.home_button.ProfileActivity"
             android:exported="true"
@@ -79,7 +85,8 @@
             android:name=".ui.home_button.CollaborationActivity"
             android:exported="true"
             android:theme="@style/Theme.EventApp.NoActionBar"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+
 
         <activity
             android:name=".ui.news.NewsWebActivity"
