@@ -3,7 +3,6 @@ package com.example.eventappp.ui.home_button
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -23,25 +22,16 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var textName: TextView
     private lateinit var textPhone: TextView
     private lateinit var textEmail: TextView
-   // private lateinit var textGender: TextView
-    private lateinit var btnLogout: Button
 
-    private lateinit var btnDeleteProfile: Button
-
+    private lateinit var btnLogout: TextView          // FIXED
+    private lateinit var btnDeleteProfile: TextView   // FIXED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        WindowInsetsControllerCompat(window, window.decorView).apply {
-            // Dark icons? (if background is light)
-            isAppearanceLightStatusBars = true
-        }
-
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         window.statusBarColor = Color.TRANSPARENT
 
         auth = FirebaseAuth.getInstance()
@@ -50,96 +40,74 @@ class ProfileActivity : AppCompatActivity() {
         textName = findViewById(R.id.textName)
         textPhone = findViewById(R.id.textPhone)
         textEmail = findViewById(R.id.textEmail)
-       // textGender = findViewById(R.id.textGender)
-        btnLogout = findViewById(R.id.btnLogout)
 
-        btnDeleteProfile = findViewById(R.id.btnDeleteProfile)
+        btnLogout = findViewById(R.id.btnLogout)             // FIXED
+        btnDeleteProfile = findViewById(R.id.btnDeleteProfile) // FIXED
 
-
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            startActivity(intent)
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP))
             finish()
         }
 
         val user = auth.currentUser
         if (user != null) {
-            // Fetch user data from Firestore
             db.collection("users").document(user.uid).get()
                 .addOnSuccessListener { doc ->
-                    if (doc != null && doc.exists()) {
+                    if (doc.exists()) {
                         textName.text = doc.getString("name") ?: "Unknown"
                         textPhone.text = doc.getString("phone") ?: "Unknown"
                         textEmail.text = doc.getString("email") ?: "Unknown"
-                       // textGender.text = doc.getString("gender") ?: "Unknown"
                     }
                 }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Failed to load profile: ${e.message}", Toast.LENGTH_SHORT).show()
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to load profile: ${it.message}", Toast.LENGTH_SHORT).show()
                 }
-        } else {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
         }
 
         btnLogout.setOnClickListener {
             auth.signOut()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-
+            startActivity(Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
             finish()
         }
 
         btnDeleteProfile.setOnClickListener {
-            val user = auth.currentUser
-            if (user != null) {
-                // Show confirmation dialog
-                val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-                builder.setTitle("Delete Profile")
-                builder.setMessage("Are you sure you want to delete your profile? This action cannot be undone.")
-                builder.setPositiveButton("Yes") { dialog, _ ->
-                    // Delete user document from Firestore
-                    db.collection("users").document(user.uid).delete()
-                        .addOnSuccessListener {
-                            // Delete user from Firebase Auth
-                            user.delete().addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Toast.makeText(this, "Profile deleted successfully", Toast.LENGTH_SHORT).show()
-                                    // Redirect to MainActivity
-                                    val intent = Intent(this, MainActivity::class.java)
-                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    startActivity(intent)
-                                    finish()
-                                } else {
-                                    Toast.makeText(this, "Failed to delete user: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            val userNow = auth.currentUser
+            if (userNow != null) {
+
+                val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Delete Profile")
+                    .setMessage("Are you sure you want to delete your profile? This cannot be undone.")
+                    .setPositiveButton("Yes") { _, _ ->
+                        db.collection("users").document(userNow.uid).delete()
+                            .addOnSuccessListener {
+                                userNow.delete().addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(this, "Profile deleted", Toast.LENGTH_SHORT).show()
+                                        startActivity(Intent(this, MainActivity::class.java)
+                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                                        finish()
+                                    } else {
+                                        Toast.makeText(this, "Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
-                        }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(this, "Failed to delete profile data: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                    .setNegativeButton("No", null)
+                    .create()
 
-                    dialog.dismiss()
-                }
-                builder.setNegativeButton("No") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                builder.create().show()
-            } else {
-                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+                dialog.show()
             }
         }
-
-
     }
 
-    // Back button goes to MainActivity
     override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        startActivity(intent)
+        startActivity(Intent(this, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP))
         finish()
     }
 }

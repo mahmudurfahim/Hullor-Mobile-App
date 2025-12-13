@@ -3,6 +3,7 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:fillViewport="true">
 
     <LinearLayout
@@ -40,17 +41,14 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <TextView
+        <ImageView
             android:id="@+id/collabNote"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_corners"
-            android:padding="16dp"
-            android:text="Hullor is excited to announce its collaboration with local event organizers to bring you unforgettable experiences. Whether it’s a concert, corporate event, wedding, or comedy show, our team is committed to making every moment special and seamless. By partnering with talented local professionals, we ensure exceptional quality, creativity, and personalized attention for every event. Share your vision with us, and together we will craft memorable experiences that exceed expectations. Join the Hullor community today and let us help you celebrate life’s important moments with style, fun, and flawless execution."
-            android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:layout_height="250dp"
+            android:src="@drawable/colab_info"
+            android:scaleType="fitXY"
+            android:padding="15dp"
+             />
 
         <Button
             android:id="@+id/collaborateWithHullorBtn"
@@ -92,8 +90,9 @@
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Your Name"
+                android:hint="Name"
                 android:padding="12dp"
+                android:textColorHint="@color/black"
                 android:background="@drawable/news_item_bg" />
 
             <EditText
@@ -102,6 +101,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Phone Number"
                 android:inputType="phone"
+                android:textColorHint="@color/black"
                 android:padding="12dp"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/news_item_bg" />
@@ -111,6 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email Address"
+                android:textColorHint="@color/black"
                 android:inputType="textEmailAddress"
                 android:padding="12dp"
                 android:layout_marginTop="6dp"
@@ -121,6 +122,7 @@
                 android:id="@+id/spinnerEventType"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:textColor="@color/black"
                 android:layout_marginTop="6dp"
                 android:padding="8dp"
                 android:background="@drawable/news_item_bg" />
@@ -132,6 +134,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Event Date"
                 android:focusable="false"
+                android:textColorHint="@color/black"
+
                 android:clickable="true"
                 android:padding="12dp"
                 android:layout_marginTop="6dp"
@@ -144,6 +148,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Event Address"
                 android:padding="12dp"
+                android:textColorHint="@color/black"
+
                 android:layout_marginTop="6dp"
                 android:background="@drawable/news_item_bg" />
 
@@ -152,9 +158,11 @@
                 android:id="@+id/etMessage"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:hint="Message / Details"
+                android:hint=" Message / Details"
                 android:gravity="top"
                 android:padding="6dp"
+                android:textColorHint="@color/black"
+
                 android:layout_marginTop="6dp"
                 android:background="@drawable/news_item_bg" />
 
@@ -167,6 +175,14 @@
                 android:layout_marginTop="15dp"
                 android:backgroundTint="#F2D241"
                 android:textColor="@color/black" />
+
+            <ImageView
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/app_icon"
+                android:scaleType="fitXY"
+                />
 
         </LinearLayout>
 

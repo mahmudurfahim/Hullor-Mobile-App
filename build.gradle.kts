@@ -3,6 +3,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+
     }
     dependencies {
         // ✅ Make sure this version matches Firebase's latest Gradle plugin

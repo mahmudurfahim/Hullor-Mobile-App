@@ -22,7 +22,7 @@ class NotificationsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the fragment layout
-        val view = inflater.inflate(R.layout.fragment_notifications, container, false)
+        val view = inflater.inflate(R.layout.fragment_more, container, false)
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()

@@ -48,10 +48,12 @@ dependencies {
     implementation(libs.androidx.core.ktx.v1120)
 
     implementation(libs.glide)
+    implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.media3.exoplayer.v111)
+    implementation(libs.media3.exoplayer.v111)
+
     annotationProcessor(libs.compiler)
     implementation (libs.okhttp)
-
-
 
 
 

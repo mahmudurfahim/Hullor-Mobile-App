@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -47,7 +48,7 @@ class CollaborationActivity : AppCompatActivity() {
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
 
         val formLayout = findViewById<LinearLayout>(R.id.formLayout)
-        val collabNote = findViewById<TextView>(R.id.collabNote)
+        val collabNote = findViewById<ImageView>(R.id.collabNote)
         val collaborateBtn = findViewById<Button>(R.id.collaborateWithHullorBtn)
 
         setupSpinner(spinnerEventType)
@@ -105,12 +106,41 @@ class CollaborationActivity : AppCompatActivity() {
 
 
     private fun setupSpinner(spinner: Spinner) {
-        val adapter = ArrayAdapter.createFromResource(
+
+        val list = resources.getStringArray(R.array.event_types).toMutableList()
+
+        // Add hint as first item
+        list.add(0, "Select Event Type")
+
+        val adapter = ArrayAdapter(
             this,
-            R.array.event_types,
-            android.R.layout.simple_spinner_dropdown_item
+            android.R.layout.simple_spinner_item,
+            list
         )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
+
+        spinner.setSelection(0) // Show hint
+
+        // Change color depending on selection
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val tv = view as? TextView ?: return
+
+                if (position == 0) {
+                    tv.setTextColor(getColor(R.color.black))  // Hint color
+                } else {
+                    tv.setTextColor(getColor(R.color.black)) // Normal color
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     private fun setupDatePicker(editText: EditText) {

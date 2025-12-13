@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.eventappp.databinding.FragmentDashboardBinding
+import com.example.eventappp.databinding.FragmentEventsBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.util.Calendar
 
 class DashboardFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentEventsBinding? = null
     private val binding get() = _binding!!
 
 
@@ -32,7 +32,7 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentEventsBinding.inflate(inflater, container, false)
        // adapter = EventPagerAdapter(eventList, showSaveButton = true)
 
         adapter = EventPagerAdapter(eventList)

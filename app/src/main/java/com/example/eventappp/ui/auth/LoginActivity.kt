@@ -5,9 +5,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.eventappp.MainActivity
 import com.example.eventappp.R
@@ -23,7 +25,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
+
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         window.statusBarColor = Color.TRANSPARENT
 
@@ -32,11 +35,12 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // Adjust top padding for status bar
+        // FIX: Correct status bar padding (no repeated padding)
         ViewCompat.setOnApplyWindowInsetsListener(binding.rootLinearLayout) { view, insets ->
+            val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             view.setPadding(
                 view.paddingLeft,
-                insets.systemWindowInsetTop + view.paddingTop,
+                topInset,
                 view.paddingRight,
                 view.paddingBottom
             )
@@ -46,11 +50,11 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener { loginUser() }
 
         binding.tvGoToRegister.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            startActivity(
+                Intent(this, RegisterActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         }
-
-
 
         findViewById<ImageView>(R.id.btnBack).setOnClickListener { onBackPressed() }
     }
@@ -70,12 +74,14 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+
                 val destination = intent.getStringExtra("destination")
                 val nextIntent = when (destination) {
                     "saved" -> Intent(this, SavedListActivity::class.java)
                     "profile" -> Intent(this, ProfileActivity::class.java)
                     else -> Intent(this, MainActivity::class.java)
                 }
+
                 nextIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(nextIntent)
             }
@@ -86,7 +92,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        startActivity(Intent(this, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        startActivity(
+            Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
     }
 }

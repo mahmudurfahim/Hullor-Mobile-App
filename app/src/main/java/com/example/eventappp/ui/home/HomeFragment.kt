@@ -88,7 +88,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // ✅ Real-time banner sync (image + title) sorted by eventDate
     private fun loadBannerData() {
         db.collection("events")
             .addSnapshotListener { snapshot, e ->
@@ -100,7 +99,6 @@ class HomeFragment : Fragment() {
 
                 bannerList.clear()
                 val today = java.util.Calendar.getInstance().apply {
-                    // Set time to start of today (00:00:00) for comparison
                     set(java.util.Calendar.HOUR_OF_DAY, 0)
                     set(java.util.Calendar.MINUTE, 0)
                     set(java.util.Calendar.SECOND, 0)
@@ -135,10 +133,16 @@ class HomeFragment : Fragment() {
                 // Sort by eventDate ascending → earliest first
                 bannerList.sortWith(compareBy { (it.eventDate as? com.google.firebase.Timestamp)?.toDate() })
 
+                // Limit to 5 items
+                if (bannerList.size > 5) {
+                    bannerList.subList(5, bannerList.size).clear()
+                }
+
                 bannerAdapter.notifyDataSetChanged()
                 if (bannerList.isNotEmpty()) updateSliderTitle(0)
             }
     }
+
 
 
 
@@ -172,7 +176,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // -------------------- 🔥 Trending Slider --------------------
     private fun loadTrendingData() {
         db.collection("trending")
             .addSnapshotListener { snapshot, e ->
@@ -184,7 +187,6 @@ class HomeFragment : Fragment() {
 
                 trendingList.clear()
                 val today = java.util.Calendar.getInstance().apply {
-                    // Set time to start of today (00:00:00) for comparison
                     set(java.util.Calendar.HOUR_OF_DAY, 0)
                     set(java.util.Calendar.MINUTE, 0)
                     set(java.util.Calendar.SECOND, 0)
@@ -218,10 +220,16 @@ class HomeFragment : Fragment() {
                 // Sort by eventDate ascending → earliest first
                 trendingList.sortWith(compareBy { (it.eventDate as? com.google.firebase.Timestamp)?.toDate() })
 
+                // Limit to 3 items
+                if (trendingList.size > 3) {
+                    trendingList.subList(3, trendingList.size).clear()
+                }
+
                 trendingAdapter.notifyDataSetChanged()
                 if (trendingList.isNotEmpty()) updateTrendingTitle(0)
             }
     }
+
 
 
 
@@ -273,8 +281,8 @@ class HomeFragment : Fragment() {
 
     private fun setupCollaborationButton() {
         binding.bookEventButton.setOnClickListener {
-            val intent = Intent(requireContext(), CollaborationActivity::class.java)
-            startActivity(intent)
+            requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+                .selectedItemId = R.id.navigation_news
 
         }
     }
