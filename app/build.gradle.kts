@@ -55,8 +55,13 @@ dependencies {
     annotationProcessor(libs.compiler)
     implementation (libs.okhttp)
 
+    // Firebase BoM
+    implementation(platform(libs.firebase.bom.v3230))
 
-
+    // Firebase modules (no version needed)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.com.google.firebase.firebase.auth.ktx)
+    implementation(libs.com.google.firebase.firebase.firestore.ktx)
     implementation(libs.androidx.appcompat.v170)
 
     implementation(libs.material.v1120)

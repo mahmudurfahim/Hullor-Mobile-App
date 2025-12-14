@@ -11,6 +11,7 @@ espressoCoreVersion = "3.6.1"
 firebaseBom = "34.4.0"
 firebaseBomVersion = "33.3.0"
 glide = "4.16.0"
+googleFirebaseBom = "32.3.0"
 googleServices = "4.4.4"
 googleServicesVersion = "4.4.2"
 kotlin = "1.9.24"
@@ -58,11 +59,16 @@ androidx-navigation-ui-ktx-v283 = { module = "androidx.navigation:navigation-ui-
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 androidx-swiperefreshlayout-v110 = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayoutVersion" }
+com-google-firebase-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
+com-google-firebase-firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-bom-v3230 = { module = "com.google.firebase:firebase-bom", version.ref = "googleFirebaseBom" }
 firebase-bom-v3330 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }

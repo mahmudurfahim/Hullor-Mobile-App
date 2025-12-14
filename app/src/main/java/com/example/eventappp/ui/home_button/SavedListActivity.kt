@@ -2,8 +2,10 @@ package com.example.eventappp.ui.home_button
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowInsetsController
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -47,7 +49,16 @@ class SavedListActivity : AppCompatActivity() {
         }
 
         window.statusBarColor = Color.TRANSPARENT
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // White text & icons
+            window.insetsController?.setSystemBarsAppearance(
+                0,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = 0
+        }
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener {

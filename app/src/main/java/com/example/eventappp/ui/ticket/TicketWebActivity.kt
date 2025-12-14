@@ -3,7 +3,9 @@ package com.example.eventappp.ui.ticket
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowInsetsController
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -31,7 +33,16 @@ class TicketWebActivity : AppCompatActivity() {
         }
 
         window.statusBarColor = Color.TRANSPARENT
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // White text & icons
+            window.insetsController?.setSystemBarsAppearance(
+                0,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = 0
+        }
         val webView = findViewById<WebView>(R.id.webView)
         val btnBack = findViewById<ImageView>(R.id.btnBack)
 

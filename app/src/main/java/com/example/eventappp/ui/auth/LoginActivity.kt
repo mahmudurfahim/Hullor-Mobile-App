@@ -2,7 +2,9 @@ package com.example.eventappp.ui.auth
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowInsetsController
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -29,6 +31,16 @@ class LoginActivity : AppCompatActivity() {
 
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         window.statusBarColor = Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // White text & icons
+            window.insetsController?.setSystemBarsAppearance(
+                0,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = 0
+        }
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
