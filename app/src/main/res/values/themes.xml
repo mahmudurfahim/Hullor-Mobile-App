@@ -32,8 +32,8 @@
 
     <!-- res/values/styles.xml -->
     <style name="Theme.EventApp.Splash" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/app_icon</item>
-        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowFullscreen">false</item>
 
     </style>
 

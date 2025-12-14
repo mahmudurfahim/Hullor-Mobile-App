@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.eventappp.R
 import com.example.eventappp.databinding.FragmentHomeBinding
 import com.example.eventappp.ui.auth.LoginActivity
-import com.example.eventappp.ui.home_button.CollaborationActivity
 import com.example.eventappp.ui.home_button.SavedListActivity
 import com.example.eventappp.ui.home_button.TrendingActivity
 import com.example.eventappp.ui.news.NewsFragment
@@ -47,13 +48,13 @@ class HomeFragment : Fragment() {
         setupButtons()
         setupMiniBanner()
         setupSavedButton()
-        setupBookingTV()
         loadBannerData()
         loadTrendingData()
         setupTicketButton()
         setupSliderSection()
         setupTrendingSection()
         setupCollaborationButton()
+        setupBackPressHandler()
 
         return binding.root
     }
@@ -243,7 +244,25 @@ class HomeFragment : Fragment() {
     }
 
 
+    private fun setupBackPressHandler() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                AlertDialog.Builder(requireContext())
+                    .setMessage("Are you sure you want to exit?")
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        dialog.dismiss()
+                        requireActivity().finish()
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setCancelable(false)
+                    .show()
+            }
+        }
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
 
 
 
@@ -261,12 +280,7 @@ class HomeFragment : Fragment() {
 
 
 
-    private fun setupBookingTV() {
-        binding.BookingTV.setOnClickListener {
-            val intent = Intent(requireContext(), CollaborationActivity::class.java)
-            startActivity(intent)
-        }
-    }
+
 
 
 

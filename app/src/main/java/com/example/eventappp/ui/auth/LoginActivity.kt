@@ -85,10 +85,19 @@ class LoginActivity : AppCompatActivity() {
                 nextIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(nextIntent)
             }
-            .addOnFailureListener {
+            .addOnFailureListener { exception ->
                 binding.btnLogin.isEnabled = true
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+
+                val message = when (exception) {
+                    is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "User not found. Please register first."
+                    is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Invalid password. Try again."
+                    is com.google.firebase.FirebaseNetworkException -> "Network error. Check your connection."
+                    else -> exception.localizedMessage ?: "Login failed. Try again."
+                }
+
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
+
     }
 
     override fun onBackPressed() {

@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.eventappp.R
-import com.example.eventappp.ui.ticket.Ticket
 
 class TicketAdapter(private val context: Context, private val tickets: List<Ticket>) : BaseAdapter() {
 

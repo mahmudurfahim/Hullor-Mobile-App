@@ -83,7 +83,7 @@ class SavedDetailActivity : AppCompatActivity() {
         db.collection("events").document(eventId).get()
             .addOnSuccessListener { doc ->
                 if (!doc.exists()) {
-                    Toast.makeText(this, "❌ Event not found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Event not found", Toast.LENGTH_SHORT).show()
                     finish()
                     return@addOnSuccessListener
                 }
@@ -126,7 +126,7 @@ class SavedDetailActivity : AppCompatActivity() {
                     snapshot.documents.forEach { doc -> batch.delete(doc.reference) }
                     batch.commit()
                         .addOnSuccessListener {
-                            Toast.makeText(this, "❌ Unsaved", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Unsaved", Toast.LENGTH_SHORT).show()
 
                             // Return the removed event ID to parent activity
                             val intent = intent

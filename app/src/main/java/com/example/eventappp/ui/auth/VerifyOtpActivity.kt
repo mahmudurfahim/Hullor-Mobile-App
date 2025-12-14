@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eventappp.R
 import com.example.eventappp.databinding.ActivityVerifyOtpBinding
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
@@ -119,15 +120,27 @@ class VerifyOtpActivity : AppCompatActivity() {
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
                     }
                     .addOnFailureListener { e ->
-                        Toast.makeText(this, "Failed to save user info: ${e.message}", Toast.LENGTH_SHORT).show()
+                        val message = when (e) {
+                            is FirebaseNetworkException -> "Network error. Check your internet."
+                            else -> "Failed to save user info: ${e.localizedMessage ?: "Unknown error"}"
+                        }
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                         binding.btnVerify.isEnabled = true
                     }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                val message = when (e) {
+                    is com.google.firebase.auth.FirebaseAuthWeakPasswordException -> "Password is too weak. Use at least 6 characters."
+                    is com.google.firebase.auth.FirebaseAuthUserCollisionException -> "This phone is already registered."
+                    is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Invalid email format."
+                    is FirebaseNetworkException -> "Network error. Check your internet."
+                    else -> "Registration failed: ${e.localizedMessage ?: "Unknown error"}"
+                }
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 binding.btnVerify.isEnabled = true
             }
     }
+
 
 
 }

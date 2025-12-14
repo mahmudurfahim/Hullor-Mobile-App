@@ -21,11 +21,12 @@ class NewsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val banglaFeeds = mapOf(
-        "https://www.banglatribune.com/feed/" to "Bangla Tribune"
+        "https://www.banglatribune.com/feed/" to "Bangla Tribune",
     )
 
     private val englishFeeds = mapOf(
         "https://www.tbsnews.net/top-news/rss.xml" to "The Business Standard"
+
     )
 
     private var banglaNews: List<NewsModel> = emptyList()

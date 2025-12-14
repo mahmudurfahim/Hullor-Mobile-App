@@ -56,20 +56,31 @@ class EventPagerAdapter(
             .centerCrop()
             .into(holder.eventImage)
 
-        holder.btnSave.visibility = if (showSaveButton) View.VISIBLE else View.GONE
+        // Always show save button
+        holder.btnSave.visibility = View.VISIBLE
 
         val user = auth.currentUser
+        val savedRef = db.collection("saved")
+
         if (user == null) {
-            holder.btnSave.visibility = View.GONE
+            // User not logged in → show Toast when clicked
+            holder.btnSave.setOnClickListener {
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Please log in to save events",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            // Optional: show unfilled icon for not saved
+            holder.btnSave.isSelected = false
+            holder.btnSave.setImageResource(R.drawable.ic_save_outline)
             return
         }
 
-        val savedRef = db.collection("saved")
-
-        // Disable button until check completes
+        // User logged in → normal save/unsave logic
         holder.btnSave.isEnabled = false
 
-        // Check if this event is already saved by this user
         savedRef.whereEqualTo("eventId", event.id)
             .whereEqualTo("userId", user.uid)
             .get()
@@ -95,7 +106,7 @@ class EventPagerAdapter(
                             .addOnSuccessListener {
                                 Toast.makeText(
                                     holder.itemView.context,
-                                    "❌ Unsaved",
+                                    "Unsaved",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 savedDocIds.remove(event.id)
@@ -135,7 +146,7 @@ class EventPagerAdapter(
                                 .addOnSuccessListener { savedDoc ->
                                     Toast.makeText(
                                         holder.itemView.context,
-                                        "✅ Saved",
+                                        "Saved",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     savedDocIds[event.id] = savedDoc.id
@@ -162,6 +173,7 @@ class EventPagerAdapter(
                 holder.btnSave.isEnabled = true
             }
     }
+
 
     private fun updateSaveButton(holder: EventViewHolder, isSaved: Boolean) {
         holder.btnSave.isSelected = isSaved

@@ -12,9 +12,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.eventappp.MainActivity
 import com.example.eventappp.R
-import com.example.eventappp.ui.home.HomeFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.util.*
 
 class TicketHomeActivity : AppCompatActivity() {
 
@@ -31,20 +31,15 @@ class TicketHomeActivity : AppCompatActivity() {
         adapter = TicketAdapter(this, tickets)
         ticketListView.adapter = adapter
 
-
-
+        // Transparent status bar
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         WindowInsetsControllerCompat(window, window.decorView).apply {
-            // Dark icons? (if background is light)
             isAppearanceLightStatusBars = true
         }
-
         window.statusBarColor = Color.TRANSPARENT
 
-
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener {
+        // Back button
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
@@ -56,18 +51,19 @@ class TicketHomeActivity : AppCompatActivity() {
         ticketListView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 val ticket = tickets[position]
-
-                // Open in Chrome or default browser
-                val browserIntent =
-                    Intent(Intent.ACTION_VIEW, android.net.Uri.parse(ticket.websiteURL))
+                val browserIntent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(ticket.websiteURL))
                 startActivity(browserIntent)
             }
-
     }
 
-
-
     private fun fetchTickets() {
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+
         db.collection("tickets")
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
@@ -75,7 +71,25 @@ class TicketHomeActivity : AppCompatActivity() {
                 tickets.clear()
                 for (doc in snapshot.documents) {
                     val ticket = doc.toObject(Ticket::class.java)
-                    ticket?.let { tickets.add(it) }
+                    ticket?.let {
+                        val eventDate = it.eventDate?.toDate()
+                        if (eventDate != null) {
+                            // Subtract 1 day to get last visible date
+                            val lastVisibleDate = Calendar.getInstance().apply {
+                                time = eventDate
+                                add(Calendar.DAY_OF_MONTH, -1)
+                                set(Calendar.HOUR_OF_DAY, 23)
+                                set(Calendar.MINUTE, 59)
+                                set(Calendar.SECOND, 59)
+                                set(Calendar.MILLISECOND, 999)
+                            }.time
+
+                            // Only show ticket if today is before or equal lastVisibleDate
+                            if (!today.after(lastVisibleDate)) {
+                                tickets.add(it)
+                            }
+                        }
+                    }
                 }
                 adapter.notifyDataSetChanged()
             }
@@ -84,11 +98,11 @@ class TicketHomeActivity : AppCompatActivity() {
             }
     }
 
+
     override fun onBackPressed() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
     }
-
 }

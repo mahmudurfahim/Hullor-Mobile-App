@@ -74,7 +74,7 @@ class RegisterActivity : AppCompatActivity() {
         db.collection("users").whereEqualTo("phone", phone).get()
             .addOnSuccessListener { phoneDocs ->
                 if (!phoneDocs.isEmpty) {
-                    Toast.makeText(this, "Phone already registered!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Phone number already registered!", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
                 val otp = Random.nextInt(100000, 999999).toString()
