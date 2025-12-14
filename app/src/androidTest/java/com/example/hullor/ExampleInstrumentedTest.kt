@@ -1,4 +1,4 @@
-package com.example.eventappp
+package com.example.hullor
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

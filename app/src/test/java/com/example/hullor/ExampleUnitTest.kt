@@ -1,4 +1,4 @@
-package com.example.eventappp
+package com.example.hullor
 
 import org.junit.Test
 
