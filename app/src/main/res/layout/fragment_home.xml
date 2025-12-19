@@ -258,7 +258,7 @@
                 android:id="@+id/BookingTV"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Book Hullor — Organize Your Event"
+                android:text="Get Tickets &amp; Join the Fun"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="16sp"

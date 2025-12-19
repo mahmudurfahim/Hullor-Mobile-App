@@ -54,6 +54,7 @@ class HomeFragment : Fragment() {
         setupTrendingSection()
         setupCollaborationButton()
         setupBackPressHandler()
+        TicketBanner()
 
         return binding.root
     }
@@ -313,6 +314,14 @@ class HomeFragment : Fragment() {
     private fun setupTrendingSection() {
         binding.trendingSeeAll.setOnClickListener {
             val intent = Intent(requireContext(), TrendingActivity::class.java)
+            startActivity(intent)
+
+        }
+    }
+
+    private fun TicketBanner() {
+        binding.BookingTV.setOnClickListener {
+            val intent = Intent(requireContext(), TicketHomeActivity::class.java)
             startActivity(intent)
 
         }

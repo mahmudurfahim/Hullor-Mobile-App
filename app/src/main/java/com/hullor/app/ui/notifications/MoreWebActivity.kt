@@ -2,12 +2,11 @@ package com.hullor.app.ui.notifications
 
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowInsetsController
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -23,18 +22,14 @@ class MoreWebActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_more_web)
 
-
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         WindowInsetsControllerCompat(window, window.decorView).apply {
-            // Dark icons? (if background is light)
             isAppearanceLightStatusBars = true
         }
 
         window.statusBarColor = Color.TRANSPARENT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // White text & icons
             window.insetsController?.setSystemBarsAppearance(
                 0,
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
@@ -43,6 +38,7 @@ class MoreWebActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = 0
         }
+
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -53,36 +49,72 @@ class MoreWebActivity : AppCompatActivity() {
 
         webView = findViewById(R.id.webView)
 
-        // WebView settings
-        webView.apply {
-            settings.apply {
-                javaScriptEnabled = true
-                domStorageEnabled = true
-                loadsImagesAutomatically = true
-                useWideViewPort = true
-                loadWithOverviewMode = true
-                allowFileAccess = true
-                javaScriptCanOpenWindowsAutomatically = true
-                setSupportMultipleWindows(true)
-                builtInZoomControls = true
-                displayZoomControls = false
-                cacheMode = WebSettings.LOAD_DEFAULT
-            }
+        // ================= SAFE WEBVIEW SETTINGS =================
+        webView.settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            loadsImagesAutomatically = true
+            useWideViewPort = true
+            loadWithOverviewMode = true
 
-            webViewClient = WebViewClient()
+            allowFileAccess = false
+            allowContentAccess = false
+
+            javaScriptCanOpenWindowsAutomatically = false
+            setSupportMultipleWindows(false)
+
+            builtInZoomControls = true
+            displayZoomControls = false
+            cacheMode = WebSettings.LOAD_DEFAULT
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+            }
         }
 
-        // Load URL passed via intent
-        intent.getStringExtra("url")?.let { webView.loadUrl(it) }
+        // ================= SAFE URL FILTER =================
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
+                val uri = request?.url ?: return true
+
+                // Block non-https and dangerous schemes
+                if (uri.scheme != "https") return true
+
+                val host = uri.host ?: return true
+                val allowedDomains = listOf(
+                    "tryhullor.com",
+                    "www.tryhullor.com"
+                )
+
+                return if (allowedDomains.any { host.endsWith(it) }) {
+                    false // load inside WebView
+                } else {
+                    // Open external links safely
+                    startActivity(Intent(Intent.ACTION_VIEW, uri))
+                    true
+                }
+            }
+        }
+
+        webView.webChromeClient = WebChromeClient()
+
+        // ================= LOAD URL =================
+        intent.getStringExtra("url")?.let {
+            val uri = Uri.parse(it)
+            if (uri.scheme == "https") {
+                webView.loadUrl(it)
+            }
+        }
     }
 
     override fun onBackPressed() {
-        val webView = findViewById<WebView>(R.id.webView)
         if (webView.canGoBack()) {
-            // Navigate back inside the WebView
             webView.goBack()
         } else {
-            // No more pages to go back to, finish activity
             finish()
         }
     }

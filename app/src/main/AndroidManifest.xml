@@ -35,7 +35,7 @@
 
         <!-- 🔹 Launcher Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.EventApp.Splash"
             android:hardwareAccelerated="true"
@@ -49,6 +49,11 @@
         <!-- 🔹 Login Activity -->
         <activity
             android:name=".ui.auth.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.NoActionBar" />
+
+        <activity
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.EventApp.NoActionBar" />
 

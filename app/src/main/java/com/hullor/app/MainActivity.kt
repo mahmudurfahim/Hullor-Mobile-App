@@ -29,8 +29,8 @@ class MainActivity : AppCompatActivity() {
             add(Manifest.permission.POST_NOTIFICATIONS)
         }
         // Add more runtime permissions here if needed
-        // add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        // add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        //add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        //add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }.toTypedArray()
 
     override fun onCreate(savedInstanceState: Bundle?) {
