@@ -1,10 +1,12 @@
 package com.hullor.app.ui.home
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -247,7 +249,7 @@ class HomeFragment : Fragment() {
     private fun setupBackPressHandler() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                AlertDialog.Builder(requireContext())
+                val dialog = AlertDialog.Builder(requireContext())
                     .setMessage("Are you sure you want to exit?")
                     .setPositiveButton("Yes") { dialog, _ ->
                         dialog.dismiss()
@@ -257,7 +259,17 @@ class HomeFragment : Fragment() {
                         dialog.dismiss()
                     }
                     .setCancelable(false)
-                    .show()
+                    .create()
+
+                // Set white background
+                dialog.window?.setBackgroundDrawableResource(android.R.color.white)
+
+                dialog.show()
+
+                // Optional: Change message and button text color to black
+                dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(Color.BLACK)
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(Color.BLACK)
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(Color.BLACK)
             }
         }
 

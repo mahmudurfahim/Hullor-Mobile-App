@@ -10,7 +10,7 @@
         android:id="@+id/topImage"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         android:src="@drawable/slider3" />
 
 

@@ -8,6 +8,7 @@ import android.view.WindowInsetsController
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -76,13 +77,6 @@ class ProfileActivity : AppCompatActivity() {
                 }
         }
 
-        btnLogout.setOnClickListener {
-            auth.signOut()
-            startActivity(Intent(this, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-            finish()
-        }
-
         btnDeleteProfile.setOnClickListener {
             val userNow = auth.currentUser
             if (userNow != null) {
@@ -96,8 +90,10 @@ class ProfileActivity : AppCompatActivity() {
                                 userNow.delete().addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         Toast.makeText(this, "Profile deleted", Toast.LENGTH_SHORT).show()
-                                        startActivity(Intent(this, MainActivity::class.java)
-                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                                        startActivity(
+                                            Intent(this, MainActivity::class.java)
+                                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                        )
                                         finish()
                                     } else {
                                         Toast.makeText(this, "Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -111,9 +107,49 @@ class ProfileActivity : AppCompatActivity() {
                     .setNegativeButton("No", null)
                     .create()
 
+                // Set white background
+                dialog.window?.setBackgroundDrawableResource(android.R.color.white)
+
+                // Optional: make message and buttons black for readability
                 dialog.show()
+                dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(Color.BLACK)
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(Color.BLACK)
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(Color.BLACK)
             }
         }
+
+        btnLogout.setOnClickListener {
+            val userNow = auth.currentUser
+            if (userNow != null) {
+                // Show confirmation dialog before logout (optional)
+                val logoutDialog = AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to logout?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        auth.signOut() // Sign out from Firebase
+                        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+
+                        // Redirect to login or main screen
+                        startActivity(
+                            Intent(this, MainActivity::class.java)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        )
+                        finish()
+                    }
+                    .setNegativeButton("No", null)
+                    .create()
+
+                // White background for dialog
+                logoutDialog.window?.setBackgroundDrawableResource(android.R.color.white)
+
+                logoutDialog.show()
+                logoutDialog.findViewById<TextView>(android.R.id.message)?.setTextColor(Color.BLACK)
+                logoutDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(Color.BLACK)
+                logoutDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(Color.BLACK)
+            }
+        }
+
+
     }
 
     override fun onBackPressed() {
