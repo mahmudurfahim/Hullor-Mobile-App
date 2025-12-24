@@ -73,8 +73,14 @@ class HomeFragment : Fragment() {
             (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         }
 
+        val recyclerView = binding.bannerViewPager.getChildAt(0) as RecyclerView
+        recyclerView.clipToPadding = false
+        recyclerView.setPadding(30, 0, 60, 0)   // space between pages
+        recyclerView.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+
         binding.bannerViewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
+
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 if (!isAdded || _binding == null) return
@@ -160,6 +166,12 @@ class HomeFragment : Fragment() {
             clipChildren = false
             (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         }
+
+        val recyclerView = binding.trendingViewPager.getChildAt(0) as RecyclerView
+        recyclerView.clipToPadding = false
+        recyclerView.setPadding(30, 0, 60, 0)   // space between pages
+        recyclerView.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+
 
         binding.trendingViewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {

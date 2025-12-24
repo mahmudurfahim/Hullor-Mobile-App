@@ -228,13 +228,6 @@
                         android:focusable="true"/>
                 </LinearLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="185dp"
-                    android:layout_margin="5dp"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:paddingEnd="30dp">
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/bannerViewPager"
@@ -242,10 +235,11 @@
                         android:layout_height="180dp"
                         android:clickable="true"
                         android:clipChildren="false"
+                        android:paddingEnd="30dp"
                         android:clipToPadding="false"
                         android:scaleType="fitXY" />
 
-                </FrameLayout>
+
 
             </LinearLayout>
 
@@ -279,6 +273,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
                 android:orientation="vertical"
                 android:background="@drawable/rounded_corners">
 
@@ -314,25 +309,18 @@
                         android:focusable="true"/>
                 </LinearLayout>
 
-                <FrameLayout
-                    android:layout_margin="5dp"
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/trendingViewPager"
                     android:layout_width="match_parent"
-                    android:layout_height="185dp"
+                    android:layout_height="180dp"
+                    android:clickable="true"
                     android:clipChildren="false"
+                    android:paddingEnd="30dp"
                     android:clipToPadding="false"
-                    android:paddingEnd="30dp">
-
-                    <androidx.viewpager2.widget.ViewPager2
-                        android:id="@+id/trendingViewPager"
-                        android:clickable="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false" />
-
-                </FrameLayout>
+                    android:scaleType="fitXY" />
 
             </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>

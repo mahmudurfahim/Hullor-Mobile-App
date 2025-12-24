@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/sliderImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:layout_margin="8dp"
-        android:contentDescription="@string/app_name"
-        android:background="@android:color/darker_gray"
-        android:clipToOutline="true" />
+<com.google.android.material.card.MaterialCardView
+android:layout_width="match_parent"
+android:layout_height="180dp"
+app:cardCornerRadius="16dp"
+app:cardElevation="8dp"
+app:cardUseCompatPadding="true"
+app:cardPreventCornerOverlap="true">
 
-</FrameLayout>
+<ImageView
+    android:id="@+id/sliderImage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="fitXY"
+    android:contentDescription="@string/app_name"
+    android:background="@android:color/darker_gray"
+    android:clipToOutline="true"/>
+</com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
