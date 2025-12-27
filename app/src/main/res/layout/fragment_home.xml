@@ -167,6 +167,7 @@
         android:layout_below="@id/topImage"
         android:clipToPadding="false"
         android:paddingTop="16dp"
+        android:scrollbars="none"
         android:layout_marginTop="60dp"
         android:fillViewport="true">
 
