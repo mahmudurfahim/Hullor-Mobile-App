@@ -97,5 +97,19 @@
             android:layout_marginBottom="4dp"
             />
 
+        <!-- Get Ticket Button -->
+        <TextView
+            android:id="@+id/tvGetTicket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get Ticket"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="?attr/selectableItemBackground"
+            android:visibility="gone"
+
+            />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
