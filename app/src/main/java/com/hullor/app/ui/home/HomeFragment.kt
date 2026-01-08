@@ -10,18 +10,25 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 
 import com.hullor.app.ui.auth.LoginActivity
 import com.hullor.app.ui.home_button.SavedListActivity
-import com.hullor.app.ui.home_button.TrendingActivity
 import com.hullor.app.ui.ticket.TicketHomeActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hullor.app.R
 import com.hullor.app.databinding.FragmentHomeBinding
+import com.hullor.app.ui.news.NewsModel
+import com.hullor.app.ui.news.RssParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
@@ -45,18 +52,17 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         setupBannerSlider()
-        setupTrendingSlider()
         setupButtons()
         setupMiniBanner()
         setupSavedButton()
         loadBannerData()
-        loadTrendingData()
+        setupNewsAll()
         setupTicketButton()
         setupSliderSection()
-        setupTrendingSection()
+        preloadGridNews()
         setupCollaborationButton()
         setupBackPressHandler()
-        TicketBanner()
+
 
         return binding.root
     }
@@ -153,97 +159,61 @@ class HomeFragment : Fragment() {
     }
 
 
+    private val banglaFeeds = mapOf(
+        "https://www.banglatribune.com/feed/" to "Bangla Tribune"
+    )
+
+    private val englishFeeds = mapOf(
+        "https://www.tbsnews.net/top-news/rss.xml" to "The Business Standard"
+    )
+
+    private var banglaNews: List<NewsModel> = emptyList()
+    private var englishNews: List<NewsModel> = emptyList()
 
 
-    // -------------------- 🔥 Trending Slider --------------------
-    private fun setupTrendingSlider() {
-        trendingAdapter = ImageSliderAdapter(trendingList)
-        binding.trendingViewPager.apply {
-            adapter = trendingAdapter
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 3
-            clipToPadding = false
-            clipChildren = false
-            (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        }
+    private fun preloadGridNews() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val banglaDeferred = banglaFeeds.map { (url, source) -> async { RssParser.parse(url, source) } }
+            val englishDeferred = englishFeeds.map { (url, source) -> async { RssParser.parse(url, source) } }
 
-        val recyclerView = binding.trendingViewPager.getChildAt(0) as RecyclerView
-        recyclerView.clipToPadding = false
-        recyclerView.setPadding(30, 0, 60, 0)   // space between pages
-        recyclerView.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+            banglaNews = banglaDeferred.awaitAll().flatten()
+            englishNews = englishDeferred.awaitAll().flatten()
 
-
-        binding.trendingViewPager.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                if (!isAdded || _binding == null) return
-                updateTrendingTitle(position)
+            withContext(Dispatchers.Main) {
+                populateGridNews()
             }
-        })
-    }
-
-    private fun updateTrendingTitle(position: Int) {
-        if (trendingList.isNotEmpty() && position in trendingList.indices) {
-            val fullTitle = trendingList[position].title
-            //binding.trendingTitle.text =
-               // if (fullTitle.length > 40) fullTitle.take(40) + "..." else fullTitle
         }
     }
 
-    private fun loadTrendingData() {
-        db.collection("trending")
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    e.printStackTrace()
-                    return@addSnapshotListener
-                }
-                if (!isAdded || _binding == null || snapshot == null) return@addSnapshotListener
+    private fun populateGridNews() {
+        // Top row → first 2 English news
+        if (englishNews.size >= 2) {
+            binding.gridTopLeftText.text = englishNews[0].title
+            binding.gridTopRightText.text = englishNews[1].title
+        }
 
-                trendingList.clear()
-                val today = java.util.Calendar.getInstance().apply {
-                    set(java.util.Calendar.HOUR_OF_DAY, 0)
-                    set(java.util.Calendar.MINUTE, 0)
-                    set(java.util.Calendar.SECOND, 0)
-                    set(java.util.Calendar.MILLISECOND, 0)
-                }.time
+        // Bottom row → first 2 Bangla news
+        if (banglaNews.size >= 2) {
+            binding.gridBottomLeftText.text = banglaNews[0].title
+            binding.gridBottomRightText.text = banglaNews[1].title
+        }
 
-                for (doc in snapshot) {
-                    val title = doc.getString("title") ?: ""
-                    val imageUrl = doc.getString("imageUrl") ?: ""
-
-                    // Parse eventDate
-                    val eventDateValue = doc.get("eventDate")
-                    val eventDate = when (eventDateValue) {
-                        is com.google.firebase.Timestamp -> eventDateValue
-                        is String -> try {
-                            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
-                            com.google.firebase.Timestamp(sdf.parse(eventDateValue)!!)
-                        } catch (ex: Exception) { null }
-                        else -> null
-                    }
-
-                    // Skip past events
-                    val eventDateOnly = eventDate?.toDate()
-                    if (eventDateOnly != null && eventDateOnly.before(today)) {
-                        continue
-                    }
-
-                    trendingList.add(Slider(imageUrl, title, eventDate))
-                }
-
-                // Sort by eventDate ascending → earliest first
-                trendingList.sortWith(compareBy { (it.eventDate as? com.google.firebase.Timestamp)?.toDate() })
-
-                // Limit to 3 items
-                if (trendingList.size > 3) {
-                    trendingList.subList(3, trendingList.size).clear()
-                }
-
-                trendingAdapter.notifyDataSetChanged()
-                if (trendingList.isNotEmpty()) updateTrendingTitle(0)
-            }
+        // Click listeners to open news
+        binding.gridTopLeft.setOnClickListener { openNewsUrl(englishNews.getOrNull(0)?.link) }
+        binding.gridTopRight.setOnClickListener { openNewsUrl(englishNews.getOrNull(1)?.link) }
+        binding.gridBottomLeft.setOnClickListener { openNewsUrl(banglaNews.getOrNull(0)?.link) }
+        binding.gridBottomRight.setOnClickListener { openNewsUrl(banglaNews.getOrNull(1)?.link) }
     }
+
+    private fun openNewsUrl(url: String?) {
+        url ?: return
+        val intent = Intent(requireContext(), com.hullor.app.ui.news.NewsWebActivity::class.java)
+        intent.putExtra("url", url)
+        startActivity(intent)
+    }
+
+
+
 
 
 
@@ -334,22 +304,15 @@ class HomeFragment : Fragment() {
     }
 
 
-
-    private fun setupTrendingSection() {
-        binding.trendingSeeAll.setOnClickListener {
-            val intent = Intent(requireContext(), TrendingActivity::class.java)
-            startActivity(intent)
-
+    private fun setupNewsAll() {
+        binding.seeAllHot.setOnClickListener {
+            requireActivity()
+                .findViewById<BottomNavigationView>(R.id.nav_view)
+                .selectedItemId = R.id.navigation_news
         }
     }
 
-    private fun TicketBanner() {
-        binding.BookingTV.setOnClickListener {
-            val intent = Intent(requireContext(), TicketHomeActivity::class.java)
-            startActivity(intent)
 
-        }
-    }
 
     private lateinit var sliderHandler: android.os.Handler
     private lateinit var sliderRunnable: Runnable
@@ -360,8 +323,8 @@ class HomeFragment : Fragment() {
         val miniBannerAdapter = AutoSlider(miniBannerList) { position ->
             if (!isAdded || _binding == null) return@AutoSlider
             when (position % miniBannerList.size) {
-                0 -> { // slider1 clicked → TrendingActivity
-                    val intent = Intent(requireContext(), TrendingActivity::class.java)
+                0 -> { // slider1 clicked → TicketActivity
+                    val intent = Intent(requireContext(), TicketHomeActivity::class.java)
                     startActivity(intent)
                 }
                 1 -> { // slider2 clicked → FragmentNews

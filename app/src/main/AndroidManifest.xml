@@ -85,15 +85,7 @@
             android:exported="true"
             android:theme="@style/Theme.EventApp.NoActionBar" />
 
-        <activity
-            android:name=".ui.home_button.TrendingActivity"
-            android:exported="true"
-            android:theme="@style/Theme.EventApp.NoActionBar" />
 
-        <activity
-            android:name=".ui.ticket.TicketWebActivity"
-            android:exported="true"
-            android:theme="@style/Theme.EventApp.NoActionBar" />
 
         <activity
             android:name=".ui.ticket.TicketHomeActivity"
