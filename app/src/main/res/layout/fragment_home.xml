@@ -179,12 +179,13 @@
                 android:id="@+id/bannerall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginTop="20dp"
                 android:orientation="vertical"
                 android:background="@drawable/rounded_corners">
 
+                <!-- Header with title and see all -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -217,15 +218,18 @@
                         android:focusable="true"/>
                 </LinearLayout>
 
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/bannerViewPager"
+                <!-- Horizontal RecyclerView Banner -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/bannerRecyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
+                    android:layout_height="wrap_content"
                     android:clipChildren="false"
-                    android:paddingEnd="30dp"
                     android:clipToPadding="false"
-                    android:clickable="true"/>
+                    android:scaleType="fitXY"
+                    android:paddingEnd="30dp"
+                    android:scrollbars="none"/>
             </LinearLayout>
+
 
             <!-- Four News Sections Grid -->
 

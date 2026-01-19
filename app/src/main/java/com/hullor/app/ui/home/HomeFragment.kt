@@ -11,6 +11,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 
@@ -36,11 +38,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var bannerAdapter: ImageSliderAdapter
-    private val bannerList = mutableListOf<Slider>()
 
-    private lateinit var trendingAdapter: ImageSliderAdapter
-    private val trendingList = mutableListOf<Slider>()
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -68,49 +66,42 @@ class HomeFragment : Fragment() {
     }
 
     // -------------------- 🖼️ Banner Slider --------------------
-    private fun setupBannerSlider() {
-        bannerAdapter = ImageSliderAdapter(bannerList)
-        binding.bannerViewPager.apply {
-            adapter = bannerAdapter
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 5
-            clipToPadding = false
-            clipChildren = false
-            (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        }
+    private val bannerList = mutableListOf<Slider>()
+    private val bannerAdapter = ImageSliderAdapter(bannerList) // initialized immediately
 
-        val recyclerView = binding.bannerViewPager.getChildAt(0) as RecyclerView
+    private fun setupBannerSlider() {
+        val recyclerView = binding.bannerRecyclerView
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = bannerAdapter
+
         recyclerView.clipToPadding = false
-        recyclerView.setPadding(30, 0, 60, 0)   // space between pages
+        recyclerView.clipChildren = false
+        recyclerView.setPadding(30, 0, 100, 0) // peek effect
         recyclerView.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-        binding.bannerViewPager.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerView)
 
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                if (!isAdded || _binding == null) return
-                updateSliderTitle(position)
+
+        // Track current position (optional if you want to do something with current item)
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(rv, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val centerView = snapHelper.findSnapView(rv.layoutManager)
+                    val position = rv.layoutManager?.getPosition(centerView!!) ?: 0
+                    // Optional: Do something with the current position
+                }
             }
         })
-    }
-
-    private fun updateSliderTitle(position: Int) {
-        if (bannerList.isNotEmpty() && position in bannerList.indices) {
-            val fullTitle = bannerList[position].title
-           // binding.sliderTitle.text =
-                //if (fullTitle.length > 40) fullTitle.take(40) + "..." else fullTitle
-        }
     }
 
     private fun loadBannerData() {
         db.collection("events")
             .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    e.printStackTrace()
-                    return@addSnapshotListener
-                }
-                if (!isAdded || _binding == null || snapshot == null) return@addSnapshotListener
+                if (e != null || snapshot == null) return@addSnapshotListener
+                if (!isAdded || _binding == null) return@addSnapshotListener
 
                 bannerList.clear()
                 val today = java.util.Calendar.getInstance().apply {
@@ -120,7 +111,7 @@ class HomeFragment : Fragment() {
                     set(java.util.Calendar.MILLISECOND, 0)
                 }.time
 
-                for (doc in snapshot) {
+                for (doc in snapshot.documents) {
                     val title = doc.getString("title") ?: ""
                     val imageUrl = doc.getString("imageUrl") ?: ""
 
@@ -137,9 +128,7 @@ class HomeFragment : Fragment() {
 
                     // Skip past events
                     val eventDateOnly = eventDate?.toDate()
-                    if (eventDateOnly != null && eventDateOnly.before(today)) {
-                        continue
-                    }
+                    if (eventDateOnly != null && eventDateOnly.before(today)) continue
 
                     // Add to banner list
                     bannerList.add(Slider(imageUrl, title, eventDate))
@@ -149,14 +138,12 @@ class HomeFragment : Fragment() {
                 bannerList.sortWith(compareBy { (it.eventDate as? com.google.firebase.Timestamp)?.toDate() })
 
                 // Limit to 5 items
-                if (bannerList.size > 5) {
-                    bannerList.subList(5, bannerList.size).clear()
-                }
+                if (bannerList.size > 5) bannerList.subList(5, bannerList.size).clear()
 
                 bannerAdapter.notifyDataSetChanged()
-                if (bannerList.isNotEmpty()) updateSliderTitle(0)
             }
     }
+
 
 
     private val banglaFeeds = mapOf(

@@ -75,39 +75,63 @@ class TicketHomeActivity : AppCompatActivity() {
             set(Calendar.MILLISECOND, 0)
         }.time
 
-        db.collection("tickets")
+        db.collection("events")
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { snapshot ->
                 tickets.clear()
-                for (doc in snapshot.documents) {
-                    val ticket = doc.toObject(Ticket::class.java)
-                    ticket?.let {
-                        val eventDate = it.eventDate?.toDate()
-                        if (eventDate != null) {
-                            // Subtract 1 day to get last visible date
-                            val lastVisibleDate = Calendar.getInstance().apply {
-                                time = eventDate
-                                add(Calendar.DAY_OF_MONTH, -1)
-                                set(Calendar.HOUR_OF_DAY, 23)
-                                set(Calendar.MINUTE, 59)
-                                set(Calendar.SECOND, 59)
-                                set(Calendar.MILLISECOND, 999)
-                            }.time
 
-                            // Only show ticket if today is before or equal lastVisibleDate
-                            if (!today.after(lastVisibleDate)) {
-                                tickets.add(it)
-                            }
+                for (doc in snapshot.documents) {
+                    val link = doc.getString("link") ?: ""
+                    if (link.isEmpty()) continue  // ❌ Skip events without link
+
+                    // Parse eventDate safely (String or Timestamp)
+                    val eventDateValue = doc.get("eventDate")
+                    val eventDate: com.google.firebase.Timestamp? = when (eventDateValue) {
+                        is com.google.firebase.Timestamp -> eventDateValue
+                        is String -> try {
+                            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                            val date = sdf.parse(eventDateValue)
+                            if (date != null) com.google.firebase.Timestamp(date) else null
+                        } catch (e: Exception) {
+                            null
                         }
+                        else -> null
+                    }
+
+                    val ticket = Ticket(
+                        title = doc.getString("title") ?: "",
+                        imageUrl = doc.getString("imageUrl") ?: "",
+                        websiteURL = link,
+                        createdAt = doc.getTimestamp("createdAt"),
+                        eventDate = eventDate
+                    )
+
+                    val date = ticket.eventDate?.toDate() ?: continue
+
+                    // Subtract 1 day to get last visible date
+                    val lastVisibleDate = Calendar.getInstance().apply {
+                        time = date
+                        add(Calendar.DAY_OF_MONTH, -1)
+                        set(Calendar.HOUR_OF_DAY, 23)
+                        set(Calendar.MINUTE, 59)
+                        set(Calendar.SECOND, 59)
+                        set(Calendar.MILLISECOND, 999)
+                    }.time
+
+                    // Only show ticket if today is before or equal lastVisibleDate
+                    if (!today.after(lastVisibleDate)) {
+                        tickets.add(ticket)
                     }
                 }
+
                 adapter.notifyDataSetChanged()
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to load tickets: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
 
     override fun onBackPressed() {

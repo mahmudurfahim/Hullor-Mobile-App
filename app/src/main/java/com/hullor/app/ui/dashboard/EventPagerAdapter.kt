@@ -55,6 +55,7 @@ class EventPagerAdapter(
         holder.eventDateText.text = "Date: ${formatDate(event.eventDate)}"
 
 
+
         val link = event.link
 
         if (link.isNotEmpty()) {
@@ -74,8 +75,10 @@ class EventPagerAdapter(
         Glide.with(holder.itemView.context)
             .load(event.imageUrl)
             .placeholder(android.R.color.darker_gray)
-            .centerCrop()
             .into(holder.eventImage)
+
+        holder.eventImage.scaleType = ImageView.ScaleType.FIT_XY
+
 
         // Always show save button
         holder.btnSave.visibility = View.VISIBLE

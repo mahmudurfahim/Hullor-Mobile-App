@@ -41,8 +41,8 @@ class SavedListAdapter(
         Glide.with(holder.itemView.context)
             .load(event.imageUrl)
             .placeholder(android.R.color.darker_gray)
-            .centerCrop()
             .into(holder.eventImage)
+        holder.eventImage.scaleType = ImageView.ScaleType.FIT_XY
     }
 
     override fun getItemCount(): Int = events.size
