@@ -13,8 +13,8 @@ android {
         applicationId = "com.hullor.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.2"
+        versionCode = 17
+        versionName = "1.1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

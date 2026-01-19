@@ -1,5 +1,7 @@
 package com.hullor.app.ui.dashboard
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +36,8 @@ class EventPagerAdapter(
         val eventLocation: TextView = view.findViewById(R.id.eventLocation)
         val eventDateText: TextView = view.findViewById(R.id.eventTimeAgo)
         val btnSave: ImageButton = view.findViewById(R.id.btnSaveEvent)
+        val tvGetTicket: TextView = view.findViewById(R.id.tvGetTicket)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -49,6 +53,23 @@ class EventPagerAdapter(
         holder.eventDescription.text = event.description
         holder.eventLocation.text = "Location: ${event.location}"
         holder.eventDateText.text = "Date: ${formatDate(event.eventDate)}"
+
+
+        val link = event.link
+
+        if (link.isNotEmpty()) {
+            holder.tvGetTicket.visibility = View.VISIBLE
+
+            holder.tvGetTicket.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+                it.context.startActivity(intent)
+            }
+        } else {
+            holder.tvGetTicket.visibility = View.GONE
+        }
+
+
+
 
         Glide.with(holder.itemView.context)
             .load(event.imageUrl)

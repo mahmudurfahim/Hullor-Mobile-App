@@ -108,7 +108,9 @@ class DashboardFragment : Fragment() {
                         location = doc.getString("location") ?: "",
                         imageUrl = doc.getString("imageUrl") ?: "",
                         createdAt = doc.get("createdAt"),
-                        eventDate = eventDate
+                        eventDate = eventDate,
+                        link = doc.getString("link") ?: ""
+
                     )
                     eventList.add(event)
                 }
